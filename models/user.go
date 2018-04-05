@@ -16,7 +16,7 @@ var (
 )
 
 func init() {
-	data, err := db.Datebase.Get([]byte("UserList"), nil)
+	data, err := db.Database.Get([]byte("UserList"), nil)
 	if err != nil {
 		log.ErrorLog("获取数据错误,key:UserList", err)
 	}
@@ -25,7 +25,7 @@ func init() {
 		// err := json.Unmarshal(data, &users)
 		err := json.Unmarshal(data, &UserList)
 		if err != nil {
-			db.Datebase.Delete([]byte("UserList"), nil)
+			db.Database.Delete([]byte("UserList"), nil)
 			log.ErrorLog("反格式化数据错误,value：", UserList, ".开始执行删除")
 		}
 		// initUserList(users)
@@ -40,7 +40,7 @@ func init() {
 		if err != nil {
 			log.ErrorLog("格式化数据错误,value：", UserList)
 		}
-		if err := db.Datebase.Put([]byte("UserList"), value, nil); err != nil {
+		if err := db.Database.Put([]byte("UserList"), value, nil); err != nil {
 			log.ErrorLog("存入数据库失败，key：UserList，value：", UserList, err)
 		}
 		// UserList = initUserList(u)
