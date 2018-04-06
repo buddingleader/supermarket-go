@@ -15,10 +15,10 @@ func checkBarcode(str string) (int64, bool) {
 }
 
 // checkPrice 校验价格
-func checkPrice(str string) (float32, bool) {
-	v, err := strconv.ParseFloat(str, 32)
+func checkPrice(str string) (float64, bool) {
+	v, err := strconv.ParseFloat(str, 64)
 	if err != nil {
 		return 0.00, false
 	}
-	return float32(v), true
+	return v, true
 }

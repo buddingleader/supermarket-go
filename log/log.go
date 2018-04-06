@@ -6,6 +6,11 @@ import (
 	"os"
 )
 
+// 日志存放路径
+const (
+	LOGPATH = "/supermarket/logs/"
+)
+
 // 日志记录
 var (
 	infoLog  *log.Logger
@@ -23,10 +28,10 @@ func init() {
 }
 
 func initLogFile(fileName string, level string) (*log.Logger, error) {
-	logFile, err := os.Create(fileName)
+	logFile, err := os.OpenFile(fileName, os.O_APPEND, 0666) //打开文件
 	defer logFile.Close()
 	if err != nil {
-		log.Printf("open file[name:%s] error !", fileName)
+		log.Printf("open file[name:%s] error [err:%s]!", fileName, err)
 		return nil, err
 	}
 	newLog := log.New(logFile, level, log.LstdFlags|log.Llongfile)

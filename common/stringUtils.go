@@ -14,3 +14,13 @@ func ToInt64(str string) int64 {
 	}
 	return v
 }
+
+// Int64ToString int64转换为string
+func Int64ToString(i int64) string {
+	return strconv.FormatInt(i, 10)
+}
+
+// Float64ToString Float64转换为string，保留两位小数
+func Float64ToString(f float64) string {
+	return strconv.FormatFloat(f, 'f', 2, 64)
+}
