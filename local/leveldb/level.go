@@ -11,7 +11,7 @@ import (
 var Database *leveldb.DB
 
 func init() {
-	db, err := leveldb.OpenFile("./local/leveldb/db", nil)
+	db, err := leveldb.OpenFile("/db", nil)
 	if err != nil {
 		log.ErrorLog("打开数据库错误...")
 	}
