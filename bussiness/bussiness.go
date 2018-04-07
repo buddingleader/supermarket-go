@@ -182,16 +182,16 @@ func deleteRecordByBarcode() {
 		allabs, abs := getAllabsAndNowab() // 获取账簿和当天账本
 		if len(abs) > 0 {
 			var ab accountBook
-			var idDelete bool = false
+			var isDelete = false
 			for index := 0; index < len(abs); index++ {
 				if barcode == abs[index].BarCode {
 					ab = abs[index]
 					abs = append(abs[:index], abs[index+1:]...)
-					idDelete = true
+					isDelete = true
 					break
 				}
 			}
-			if idDelete {
+			if isDelete {
 				allabs[common.GetDate()] = abs
 				if db.Put(ACCOUNTBOOKNAME, allabs) {
 					log.InfoLog("删除指定记录成功!", ab.String())

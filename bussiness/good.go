@@ -7,5 +7,5 @@ type good struct {
 	InPrice       float32 `json:"InPrice"`
 	OutPrice      float32 `json:"OutPrice"`
 	Specification string  `json:"Specification"`
-	quantity      int32   `json:"quantity"`
+	Quantity      int32   `json:"Quantity"`
 }
