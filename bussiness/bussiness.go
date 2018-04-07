@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
-	"supermarket-go/common"
+	"supermarket-go/common/utils"
 	db "supermarket-go/local/leveldb"
 	"supermarket-go/log"
 
@@ -65,7 +65,7 @@ func ToString(allabs map[string][]accountBook) string {
 			sb.WriteString("     —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— \n")
 			sb.WriteString("    [                                           总  价 : ")
 			sb.WriteString(common.Float64ToString(sumPrice))
-			sb.WriteString("  \t\t  ")
+			sb.WriteString("  \t\t  \n")
 		}
 	}
 	return sb.String()
