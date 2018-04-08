@@ -11,3 +11,10 @@ d2              # 指定条形码删除当天记录，注意只能按时间倒�
 #两种记账模式
 1.直接输入条形码 
 2.直接输入价格
+
+
+#更新脚本
+cd $GOPATH/src/supermarket-go
+git pull
+go build main.go
+./main.exe
