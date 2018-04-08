@@ -52,17 +52,17 @@ func ToString(allabs map[string][]accountBook) string {
 			sb.WriteString("<--日期：")
 			sb.WriteString(i)
 			sb.WriteString("-->\n")
-			sb.WriteString("   —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— \n")
-			sb.WriteString("  |")
+			sb.WriteString("     —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— \n")
+			sb.WriteString("    |")
 			sb.WriteString(abs[0].String())
 			sb.WriteString("|\n")
 			for index := 1; index < len(abs); index++ {
-				sb.WriteString("  |")
+				sb.WriteString("    |")
 				sb.WriteString(abs[index].String())
 				sumPrice += abs[index].Price
 				sb.WriteString("|\n")
 			}
-			sb.WriteString("   —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— \n")
+			sb.WriteString("     —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— \n")
 			sb.WriteString("                                              总  价 : ")
 			sb.WriteString(common.Float64ToString(sumPrice))
 			sb.WriteString("  \t\t  \n")
