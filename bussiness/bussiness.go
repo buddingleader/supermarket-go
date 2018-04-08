@@ -63,9 +63,9 @@ func ToString(allabs map[string][]accountBook) string {
 				sb.WriteString("|\n")
 			}
 			sb.WriteString("   —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— \n")
-			sb.WriteString("  [                                           总  价 : ")
+			sb.WriteString("                                              总  价 : ")
 			sb.WriteString(common.Float64ToString(sumPrice))
-			sb.WriteString("  \t\t  ]\n")
+			sb.WriteString("  \t\t  \n")
 		}
 	}
 	return sb.String()
