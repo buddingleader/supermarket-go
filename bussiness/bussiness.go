@@ -41,32 +41,40 @@ func (a *accountBook) String() string {
 }
 
 // ToString 账簿输出
+func absToString(key string, abs []accountBook) string {
+	sb := bytes.Buffer{}
+	var sumPrice float64
+	if len(abs) > 0 {
+		sumPrice = abs[0].Price
+		sb.WriteString("<--日期：")
+		sb.WriteString(key)
+		sb.WriteString("-->\n")
+		sb.WriteString("     —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— \n")
+		sb.WriteString("    |")
+		sb.WriteString(abs[0].String())
+		sb.WriteString("|\n")
+		for index := 1; index < len(abs); index++ {
+			sb.WriteString("    |")
+			sb.WriteString(abs[index].String())
+			sumPrice += abs[index].Price
+			sb.WriteString("|\n")
+		}
+		sb.WriteString("     —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— \n")
+		sb.WriteString("                                              总  价 : ")
+		sb.WriteString(common.Float64ToString(sumPrice))
+		sb.WriteString("  \t\t  \n")
+	}
+	return sb.String()
+}
+
+// ToString 账簿输出
 func ToString(allabs map[string][]accountBook) string {
 	sb := bytes.Buffer{}
 	sb.WriteString(string(ACCOUNTBOOKNAME))
 	sb.WriteString(" 账簿：]\n")
-	var sumPrice float64
+	// var sumPrice float64
 	for i, abs := range allabs {
-		if len(abs) > 0 {
-			sumPrice = abs[0].Price
-			sb.WriteString("<--日期：")
-			sb.WriteString(i)
-			sb.WriteString("-->\n")
-			sb.WriteString("     —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— \n")
-			sb.WriteString("    |")
-			sb.WriteString(abs[0].String())
-			sb.WriteString("|\n")
-			for index := 1; index < len(abs); index++ {
-				sb.WriteString("    |")
-				sb.WriteString(abs[index].String())
-				sumPrice += abs[index].Price
-				sb.WriteString("|\n")
-			}
-			sb.WriteString("     —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— \n")
-			sb.WriteString("                                              总  价 : ")
-			sb.WriteString(common.Float64ToString(sumPrice))
-			sb.WriteString("  \t\t  \n")
-		}
+		sb.WriteString(absToString(i, abs))
 	}
 	return sb.String()
 }
@@ -78,7 +86,9 @@ func OpenBussiness() {
 	for {
 		input := readConsole()
 		switch input {
-		case "s": //显示数据库
+		case "s": //显示当天数据库
+			showNowDataBase()
+		case "s1": //显示全部数据库
 			showDataBase()
 		case "d": //删除上一条记录
 			deleteLastRecord()
@@ -143,7 +153,28 @@ func saveAcountBook(date string, barcode int64, price float64) bool {
 	return true
 }
 
-// showDataBase 输出数据库
+// showNowDataBase 输出当天数据库
+func showNowDataBase() {
+	log.InfoLog("开始输出数据库...")
+	// iter := db.Database.NewIterator(nil, nil)
+	iter := db.Database.NewIterator(util.BytesPrefix([]byte(ACCOUNTBOOKNAME)), nil)
+	for iter.Next() {
+		// Remember that the contents of the returned slice should not be modified, and
+		// only valid until the next call to Next.
+		// key := iter.Key()
+		value := iter.Value()
+		var allabs map[string][]accountBook
+		if err := json.Unmarshal(value, &allabs); err != nil {
+			db.Database.Delete([]byte(ACCOUNTBOOKNAME), nil)
+			log.ErrorLog("反格式化数据错误,value：", allabs, ".开始执行删除")
+		}
+		log.InfoLog(absToString(common.GetDate(), allabs[common.GetDate()]))
+	}
+	iter.Release()
+	// err = iter.Error()
+}
+
+// showDataBase 输出全部数据库
 func showDataBase() {
 	log.InfoLog("开始输出数据库...")
 	// iter := db.Database.NewIterator(nil, nil)
@@ -153,12 +184,12 @@ func showDataBase() {
 		// only valid until the next call to Next.
 		// key := iter.Key()
 		value := iter.Value()
-		var abs map[string][]accountBook
-		if err := json.Unmarshal(value, &abs); err != nil {
+		var allabs map[string][]accountBook
+		if err := json.Unmarshal(value, &allabs); err != nil {
 			db.Database.Delete([]byte(ACCOUNTBOOKNAME), nil)
-			log.ErrorLog("反格式化数据错误,value：", abs, ".开始执行删除")
+			log.ErrorLog("反格式化数据错误,value：", allabs, ".开始执行删除")
 		}
-		log.InfoLog(ToString(abs))
+		log.InfoLog(ToString(allabs))
 	}
 	iter.Release()
 	// err = iter.Error()
