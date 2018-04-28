@@ -41,13 +41,13 @@ func (a *accountBook) String() string {
 }
 
 // ToString 账簿输出
-func absToString(key string, abs []accountBook) string {
+func absToString(date string, abs []accountBook) string {
 	sb := bytes.Buffer{}
 	var sumPrice float64
 	if len(abs) > 0 {
 		sumPrice = abs[0].Price
 		sb.WriteString("<--日期：")
-		sb.WriteString(key)
+		sb.WriteString(date)
 		sb.WriteString("-->\n")
 		sb.WriteString("     —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— \n")
 		sb.WriteString("    |")
@@ -90,6 +90,8 @@ func OpenBussiness() {
 			showNowDataBase()
 		case "s1": //显示全部数据库
 			showDataBase()
+		case "s2": //显示指定日期的数据库
+			showTheDayDataBase()
 		case "d": //删除上一条记录
 			deleteLastRecord()
 		case "d1": //删除当天记录
@@ -193,6 +195,15 @@ func showDataBase() {
 	}
 	iter.Release()
 	// err = iter.Error()
+}
+
+// showTheDayDataBase() 输出制定日期数据库
+func showTheDayDataBase() {
+	log.InfoLog("请输入日期[格式：20180428]查询数据库：")
+	input := readConsole()
+	allabs, _ := getAllabsAndNowab()
+	abs := allabs[input]
+	log.InfoLog(absToString(input, abs))
 }
 
 // getAllabsAndNowab 获取账簿和当天账本
