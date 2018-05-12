@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"os"
+	"supermarket-go/bussiness/good"
 	"supermarket-go/common/utils"
 	db "supermarket-go/local/leveldb"
 	"supermarket-go/log"
@@ -119,10 +121,16 @@ func readConsole() string {
 func account(key string, input string) {
 	if barcode, isBarcode := checkBarcode(input); isBarcode {
 		log.InfoLog("标准条形码输入，请输入价格：")
+		if prices, err := good.GetGoodPrice(barcode); err == nil {
+			fmt.Println("历史出售价格       历史出售时间           价格出售次数")
+			for _, sp := range prices {
+				fmt.Printf("  %.2f\t\t%s\t\t%d\n", sp.Price, sp.Time, sp.Count)
+			}
+		}
 		for {
 			input1 := readConsole()
 			if price, isPrice := checkPrice(input1); isPrice {
-				saveAcountBook(key, barcode, price)
+				saveAcountBook(key, barcode, price, false)
 				break
 			} else {
 				log.InfoLog("请输入正确的价格：")
@@ -131,7 +139,7 @@ func account(key string, input string) {
 	} else {
 		log.InfoLog("非条形码输入，尝试匹配价格...")
 		if price, isPrice := checkPrice(input); isPrice {
-			saveAcountBook(key, common.GetRandBarcode(), price)
+			saveAcountBook(key, common.GetRandBarcode(), price, true)
 		} else {
 			log.InfoLog("请输入正确的价格：")
 		}
@@ -139,18 +147,21 @@ func account(key string, input string) {
 }
 
 // saveAcountBook 记录账本
-func saveAcountBook(date string, barcode int64, price float64) bool {
+func saveAcountBook(date string, barcode int64, price float64, isRandom bool) bool {
 	allabs, abs := getAllabsAndNowab() // 获取账簿和当天账本
-	goods := make(map[int64]good)      //条形码做键值
-	good := good{Name: "默认商品"}
-	if err := db.Get(GOODSNAME, &goods); err == nil { //取得商品库
-		good = goods[barcode] //取得当前卖出的商品
+	g, err := good.GetGood(barcode)
+	if err != nil {
+		log.ErrorLog("获取商品失败!", err)
+		return false
 	}
-	ab := accountBook{barcode, good.Name, price, common.GetTime1()} //初始化账目
-	abs = append(abs, ab)                                           //加入账本
-	allabs[date] = abs                                              //存入账簿
+	ab := accountBook{barcode, g.Name, price, common.GetTime1()} //初始化账目
+	abs = append(abs, ab)                                        //加入账本
+	allabs[date] = abs                                           //存入账簿
 	if db.Put(ACCOUNTBOOKNAME, allabs) {
 		log.InfoLog("存入数据库成功!", ab.String())
+		if !isRandom {
+			good.PutGoodPrice(g, price)
+		}
 	}
 	return true
 }

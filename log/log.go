@@ -29,11 +29,10 @@ func init() {
 
 func initLogFile(fileName string, level string) (*log.Logger, error) {
 	logFile, err := os.OpenFile(fileName, os.O_APPEND, 0666) //打开文件
-	defer logFile.Close()
 	if err != nil {
-		log.Printf("open file[name:%s] error [err:%s]!", fileName, err)
-		return nil, err
+		logFile, err = os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666) //打开文件
 	}
+	defer logFile.Close()
 	newLog := log.New(logFile, level, log.LstdFlags|log.Llongfile)
 	newLog.Printf("A %s message here", level)
 	return newLog, nil

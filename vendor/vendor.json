@@ -1,0 +1,193 @@
+{
+	"comment": "",
+	"ignore": "",
+	"package": [
+		{
+			"checksumSHA1": "XPBOMCfmUXuXwU4fypVVyVqkWos=",
+			"path": "github.com/astaxie/beego",
+			"revision": "f16688817aa428d10361394015b40d096b680542",
+			"revisionTime": "2017-12-18T11:18:59Z"
+		},
+		{
+			"checksumSHA1": "w/F1RZ3YrFm3DgCCeLDT4+t9u7Y=",
+			"path": "github.com/astaxie/beego/config",
+			"revision": "f16688817aa428d10361394015b40d096b680542",
+			"revisionTime": "2017-12-18T11:18:59Z"
+		},
+		{
+			"checksumSHA1": "LP7Ko/ytrFjuKu+XnTAELNeXo6Q=",
+			"path": "github.com/astaxie/beego/context",
+			"revision": "f16688817aa428d10361394015b40d096b680542",
+			"revisionTime": "2017-12-18T11:18:59Z"
+		},
+		{
+			"checksumSHA1": "VCADkbVHQq6g1+u9lNDciYO7/Rw=",
+			"path": "github.com/astaxie/beego/context/param",
+			"revision": "f16688817aa428d10361394015b40d096b680542",
+			"revisionTime": "2017-12-18T11:18:59Z"
+		},
+		{
+			"checksumSHA1": "zNVoeKrYcNNex6/K/4sts8XIL5A=",
+			"path": "github.com/astaxie/beego/grace",
+			"revision": "f16688817aa428d10361394015b40d096b680542",
+			"revisionTime": "2017-12-18T11:18:59Z"
+		},
+		{
+			"checksumSHA1": "1/8MYZKs9r+1wmRp3Lv7xoR593g=",
+			"path": "github.com/astaxie/beego/logs",
+			"revision": "f16688817aa428d10361394015b40d096b680542",
+			"revisionTime": "2017-12-18T11:18:59Z"
+		},
+		{
+			"checksumSHA1": "3nRZyMur8l2qYmCQQiFp1Pg0zTg=",
+			"path": "github.com/astaxie/beego/session",
+			"revision": "f16688817aa428d10361394015b40d096b680542",
+			"revisionTime": "2017-12-18T11:18:59Z"
+		},
+		{
+			"checksumSHA1": "zwOb3pB5bxpiw68CQ4kksb1bIrw=",
+			"path": "github.com/astaxie/beego/toolbox",
+			"revision": "f16688817aa428d10361394015b40d096b680542",
+			"revisionTime": "2017-12-18T11:18:59Z"
+		},
+		{
+			"checksumSHA1": "cT0JNO+/lSXEKE7zxxs3FoK+GuU=",
+			"path": "github.com/astaxie/beego/utils",
+			"revision": "f16688817aa428d10361394015b40d096b680542",
+			"revisionTime": "2017-12-18T11:18:59Z"
+		},
+		{
+			"checksumSHA1": "IjqIqRcJB98vHedl7i611ua9Iic=",
+			"path": "github.com/golang/snappy",
+			"revision": "553a641470496b2327abcac10b36396bd98e45c9",
+			"revisionTime": "2017-02-15T23:32:05Z"
+		},
+		{
+			"checksumSHA1": "730+/5L+YlbjZvGXskovgzO0bNE=",
+			"path": "github.com/jtolds/gls",
+			"revision": "77f18212c9c7edc9bd6a33d383a7b545ce62f064",
+			"revisionTime": "2017-05-03T22:40:06Z"
+		},
+		{
+			"checksumSHA1": "3yxPcSpxgBkvDu6sDTybMF2osMY=",
+			"path": "github.com/smartystreets/assertions",
+			"revision": "7678a5452ebea5b7090a6b163f844c133f523da2",
+			"revisionTime": "2018-03-01T16:12:46Z"
+		},
+		{
+			"checksumSHA1": "1HcLWdSTwR0UkS7hLk+JWGYby8o=",
+			"path": "github.com/smartystreets/assertions/internal/go-render/render",
+			"revision": "7678a5452ebea5b7090a6b163f844c133f523da2",
+			"revisionTime": "2018-03-01T16:12:46Z"
+		},
+		{
+			"checksumSHA1": "/Mlt459vsuvFRHpxOiCNMasmE28=",
+			"path": "github.com/smartystreets/assertions/internal/oglematchers",
+			"revision": "7678a5452ebea5b7090a6b163f844c133f523da2",
+			"revisionTime": "2018-03-01T16:12:46Z"
+		},
+		{
+			"checksumSHA1": "7Az8gijNeKCUkA+7DNP4uqaa144=",
+			"path": "github.com/smartystreets/goconvey/convey",
+			"revision": "ef6db91d284a0e7badaa1f0c404c30aa7dee3aed",
+			"revisionTime": "2018-02-22T19:45:00Z"
+		},
+		{
+			"checksumSHA1": "JCXbXPYEfuaX7XiVOUDEUXVae4U=",
+			"path": "github.com/smartystreets/goconvey/convey/gotest",
+			"revision": "ef6db91d284a0e7badaa1f0c404c30aa7dee3aed",
+			"revisionTime": "2018-02-22T19:45:00Z"
+		},
+		{
+			"checksumSHA1": "SgGP/yoMAnNwQ5ACNrxzHshWYVU=",
+			"path": "github.com/smartystreets/goconvey/convey/reporting",
+			"revision": "ef6db91d284a0e7badaa1f0c404c30aa7dee3aed",
+			"revisionTime": "2018-02-22T19:45:00Z"
+		},
+		{
+			"checksumSHA1": "AgNC9KmXVDPurPqoJ741BczVoBw=",
+			"path": "github.com/syndtr/goleveldb/leveldb",
+			"revision": "714f901b98fdb3aa954b4193d8cbd64a28d80cad",
+			"revisionTime": "2018-03-31T01:49:30Z"
+		},
+		{
+			"checksumSHA1": "qko9yYd1VVIJ7ceFjsfFL3cANWg=",
+			"path": "github.com/syndtr/goleveldb/leveldb/cache",
+			"revision": "714f901b98fdb3aa954b4193d8cbd64a28d80cad",
+			"revisionTime": "2018-03-31T01:49:30Z"
+		},
+		{
+			"checksumSHA1": "fX6hNc8MjmY0uRXLeDDR1yP1RW4=",
+			"path": "github.com/syndtr/goleveldb/leveldb/comparer",
+			"revision": "714f901b98fdb3aa954b4193d8cbd64a28d80cad",
+			"revisionTime": "2018-03-31T01:49:30Z"
+		},
+		{
+			"checksumSHA1": "KPLIq+6AiJ0T3M8ujkuPkUHExZg=",
+			"path": "github.com/syndtr/goleveldb/leveldb/errors",
+			"revision": "714f901b98fdb3aa954b4193d8cbd64a28d80cad",
+			"revisionTime": "2018-03-31T01:49:30Z"
+		},
+		{
+			"checksumSHA1": "0VG/jPRNvgZ9RPaPZXoduL1zzwE=",
+			"path": "github.com/syndtr/goleveldb/leveldb/filter",
+			"revision": "714f901b98fdb3aa954b4193d8cbd64a28d80cad",
+			"revisionTime": "2018-03-31T01:49:30Z"
+		},
+		{
+			"checksumSHA1": "gKMyT/E9Vadu3VGDv4rwjw2+hSo=",
+			"path": "github.com/syndtr/goleveldb/leveldb/iterator",
+			"revision": "714f901b98fdb3aa954b4193d8cbd64a28d80cad",
+			"revisionTime": "2018-03-31T01:49:30Z"
+		},
+		{
+			"checksumSHA1": "3623ADTbkLINmyuVz9ZrRyMDyJ0=",
+			"path": "github.com/syndtr/goleveldb/leveldb/journal",
+			"revision": "714f901b98fdb3aa954b4193d8cbd64a28d80cad",
+			"revisionTime": "2018-03-31T01:49:30Z"
+		},
+		{
+			"checksumSHA1": "ni8CjjHT6Rs+b/YeJZTKaPI4dW4=",
+			"path": "github.com/syndtr/goleveldb/leveldb/memdb",
+			"revision": "714f901b98fdb3aa954b4193d8cbd64a28d80cad",
+			"revisionTime": "2018-03-31T01:49:30Z"
+		},
+		{
+			"checksumSHA1": "6Umu4vGG/SklM+2SKN3Gbr9mafs=",
+			"path": "github.com/syndtr/goleveldb/leveldb/opt",
+			"revision": "714f901b98fdb3aa954b4193d8cbd64a28d80cad",
+			"revisionTime": "2018-03-31T01:49:30Z"
+		},
+		{
+			"checksumSHA1": "Fpq9yMkfysZ6ss7lMN3eDooMqnQ=",
+			"path": "github.com/syndtr/goleveldb/leveldb/storage",
+			"revision": "714f901b98fdb3aa954b4193d8cbd64a28d80cad",
+			"revisionTime": "2018-03-31T01:49:30Z"
+		},
+		{
+			"checksumSHA1": "pDngRLJ4RRBVJeQVgTmNUnnhoyk=",
+			"path": "github.com/syndtr/goleveldb/leveldb/table",
+			"revision": "714f901b98fdb3aa954b4193d8cbd64a28d80cad",
+			"revisionTime": "2018-03-31T01:49:30Z"
+		},
+		{
+			"checksumSHA1": "3V+khp22mqpjDPzu11hQDTYohI0=",
+			"path": "github.com/syndtr/goleveldb/leveldb/testutil",
+			"revision": "714f901b98fdb3aa954b4193d8cbd64a28d80cad",
+			"revisionTime": "2018-03-31T01:49:30Z"
+		},
+		{
+			"checksumSHA1": "IMeWxNrMKcdCwL7uBCE51CDBOjU=",
+			"path": "github.com/syndtr/goleveldb/leveldb/util",
+			"revision": "714f901b98fdb3aa954b4193d8cbd64a28d80cad",
+			"revisionTime": "2018-03-31T01:49:30Z"
+		},
+		{
+			"checksumSHA1": "cQCn/pDwVnaSXcrHecIYJHfAClE=",
+			"path": "github.com/tealeg/xlsx",
+			"revision": "f36fa3be8893d528004c0938e06b65c67f69b76f",
+			"revisionTime": "2018-04-19T19:51:53Z"
+		}
+	],
+	"rootPath": "supermarket-go"
+}
