@@ -311,3 +311,5 @@
 [Info]2018/05/10 07:23:38 F:/GOPATH/src/supermarket-go/log/log.go:38: A [Info] message here
 [Info]2018/05/11 08:48:53 F:/GOPATH/src/supermarket-go/log/log.go:38: A [Info] message here
 [Info]2018/05/12 08:23:07 F:/GOPATH/src/supermarket-go/log/log.go:38: A [Info] message here
+[Info]2018/05/12 14:16:28 F:/GOPATH/src/supermarket-go/log/log.go:37: A [Info] message here
+[Info]2018/05/12 14:16:41 F:/GOPATH/src/supermarket-go/log/log.go:37: A [Info] message here
