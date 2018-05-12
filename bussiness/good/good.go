@@ -156,16 +156,16 @@ func PutGood(good Good) (bool, error) {
 }
 
 // GetGoodPrice 从商品库中取得商品的历史销售价格，并按时间倒序排序
-func GetGoodPrice(barcode int64) ([]SellPrice, error) {
+func GetGoodPrice(barcode int64) (Good, error) {
 	good, err := GetGood(barcode)
 	if err != nil {
 		log.ErrorLog(err)
-		return []SellPrice{}, err
+		return Good{}, err
 	}
 	SortSellPrice(good.OutPrice, func(p, q *SellPrice) bool {
 		return p.Time > q.Time
 	})
-	return good.OutPrice, nil
+	return good, nil
 }
 
 // PutGoodPrice 存储商品到商品库中，并更新销售指导价

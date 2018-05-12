@@ -20,6 +20,10 @@ const (
 	GOODSNAME       = "goods"       //商品库名称
 )
 
+var (
+	cacheAccount []accountBook
+)
+
 // accountBook 账目
 type accountBook struct {
 	BarCode int64   `json:"barCode"`
@@ -120,28 +124,56 @@ func readConsole() string {
 // account 记账
 func account(key string, input string) {
 	if barcode, isBarcode := checkBarcode(input); isBarcode {
-		log.InfoLog("标准条形码输入，请输入价格：")
-		if prices, err := good.GetGoodPrice(barcode); err == nil {
-			fmt.Println("历史出售价格       历史出售时间           价格出售次数")
-			for _, sp := range prices {
-				fmt.Printf("  %.2f\t\t%s\t\t%d\n", sp.Price, sp.Time, sp.Count)
-			}
-		}
-		for {
-			input1 := readConsole()
-			if price, isPrice := checkPrice(input1); isPrice {
-				saveAcountBook(key, barcode, price, false)
-				break
-			} else {
-				log.InfoLog("请输入正确的价格：")
-			}
-		}
+		accountBarCode(key, barcode)
 	} else {
 		log.InfoLog("非条形码输入，尝试匹配价格...")
 		if price, isPrice := checkPrice(input); isPrice {
 			saveAcountBook(key, common.GetRandBarcode(), price, true)
+		} else if input == "" {
+			for _, ab := range cacheAccount {
+				saveAcountBook(key, ab.BarCode, ab.Price, false)
+			}
+			fmt.Println("本次记账清单：", absToString(key, cacheAccount))
+			cacheAccount = []accountBook{}
 		} else {
 			log.InfoLog("请输入正确的价格：")
+		}
+	}
+}
+
+func accountBarCode(key string, barcode int64) {
+	log.InfoLog("标准条形码输入，请输入价格：")
+	msp := good.SellPrice{}
+	g, err := good.GetGoodPrice(barcode)
+	if err == nil {
+		fmt.Println("历史出售价格       历史出售时间           价格出售次数")
+		for _, sp := range g.OutPrice {
+			if sp.Count > msp.Count {
+				msp = sp
+			}
+			fmt.Printf("  %.2f\t\t%s\t\t%d\n", sp.Price, sp.Time, sp.Count)
+		}
+		ab := accountBook{
+			BarCode: barcode,
+			Name:    g.Name,
+			Price:   msp.Price,
+		}
+		cacheAccount = append(cacheAccount, ab)
+		fmt.Println("缓存的账本：", absToString(key, cacheAccount))
+		log.InfoLog("已使用推荐价格：", msp.Price, " 你也可以重新输入价格或继续输入条形码或按Enter提交记账：")
+		input1 := readConsole()
+		if barcode, isBarcode := checkBarcode(input1); isBarcode {
+			accountBarCode(key, barcode)
+		} else if price, isPrice := checkPrice(input1); isPrice {
+			ab.Price = price
+			cacheAccount = append(cacheAccount[:len(cacheAccount)-1], ab)
+			fmt.Println("缓存的账本：", absToString(key, cacheAccount), " 你可以继续输入条形码或按Enter提交记账：")
+		} else if input1 == "" {
+			for _, ab := range cacheAccount {
+				saveAcountBook(key, ab.BarCode, ab.Price, false)
+			}
+			fmt.Println("本次记账清单：", absToString(key, cacheAccount))
+			cacheAccount = []accountBook{}
 		}
 	}
 }
