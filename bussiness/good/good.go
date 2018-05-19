@@ -1,6 +1,7 @@
 package good
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	common "supermarket-go/common/utils"
@@ -170,6 +171,9 @@ func GetGoodPrice(barcode int64) (Good, error) {
 
 // PutGoodPrice 存储商品到商品库中，并更新销售指导价
 func PutGoodPrice(good Good, price float64) (bool, error) {
+	if price <= 0 {
+		return false, errors.New("金额小于等于0")
+	}
 	prices := good.OutPrice
 	for index, sp := range prices {
 		if sp.Price == price {

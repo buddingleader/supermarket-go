@@ -159,6 +159,7 @@ func accountBarCode(key string, barcode int64) {
 			Price:   msp.Price,
 		}
 		cacheAccount = append(cacheAccount, ab)
+		good.PutGoodPrice(g, ab.Price)
 		fmt.Println("缓存的账本：", absToString(key, cacheAccount))
 		log.InfoLog("已使用推荐价格：", msp.Price, " 你也可以重新输入价格或继续输入条形码或按Enter提交记账：")
 		input1 := readConsole()
@@ -167,6 +168,7 @@ func accountBarCode(key string, barcode int64) {
 		} else if price, isPrice := checkPrice(input1); isPrice {
 			ab.Price = price
 			cacheAccount = append(cacheAccount[:len(cacheAccount)-1], ab)
+			good.PutGoodPrice(g, ab.Price)
 			fmt.Println("缓存的账本：", absToString(key, cacheAccount), " 你可以继续输入条形码或按Enter提交记账：")
 		} else if input1 == "" {
 			for _, ab := range cacheAccount {
@@ -191,9 +193,6 @@ func saveAcountBook(date string, barcode int64, price float64, isRandom bool) bo
 	allabs[date] = abs                                           //存入账簿
 	if db.Put(ACCOUNTBOOKNAME, allabs) {
 		log.InfoLog("存入数据库成功!", ab.String())
-		if !isRandom {
-			good.PutGoodPrice(g, price)
-		}
 	}
 	return true
 }
