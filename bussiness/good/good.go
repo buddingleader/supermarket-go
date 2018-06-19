@@ -174,6 +174,7 @@ func PutGoodPrice(good Good, price float64) (bool, error) {
 	if price <= 0 {
 		return false, errors.New("金额小于等于0")
 	}
+
 	prices := good.OutPrice
 	for index, sp := range prices {
 		if sp.Price == price {
@@ -184,12 +185,12 @@ func PutGoodPrice(good Good, price float64) (bool, error) {
 			return PutGood(good)
 		}
 	}
-	prices = append(prices, SellPrice{
+
+	good.OutPrice = append(prices, SellPrice{
 		Price: price,
 		Time:  common.GetTimeStamp1(),
 		Count: 1,
 	})
-	good.OutPrice = prices
 	return PutGood(good)
 }
 

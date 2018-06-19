@@ -146,7 +146,7 @@ func accountBarCode(key string, barcode int64) {
 	msp := good.SellPrice{}
 	g, err := good.GetGoodPrice(barcode)
 	if err == nil {
-		fmt.Println("历史出售价格       历史出售时间           价格出售次数")
+		fmt.Println("历史出售价格       最新出售时间           价格出售次数")
 		for _, sp := range g.OutPrice {
 			if sp.Count > msp.Count {
 				msp = sp
@@ -159,11 +159,12 @@ func accountBarCode(key string, barcode int64) {
 			Price:   msp.Price,
 		}
 		cacheAccount = append(cacheAccount, ab)
-		good.PutGoodPrice(g, ab.Price)
 		fmt.Println("缓存的账本：", absToString(key, cacheAccount))
 		log.InfoLog("已使用推荐价格：", msp.Price, " 你也可以重新输入价格或继续输入条形码或按Enter提交记账：")
+
 		input1 := readConsole()
 		if barcode, isBarcode := checkBarcode(input1); isBarcode {
+			good.PutGoodPrice(g, ab.Price)
 			accountBarCode(key, barcode)
 		} else if price, isPrice := checkPrice(input1); isPrice {
 			ab.Price = price
@@ -171,6 +172,7 @@ func accountBarCode(key string, barcode int64) {
 			good.PutGoodPrice(g, ab.Price)
 			fmt.Println("缓存的账本：", absToString(key, cacheAccount), " 你可以继续输入条形码或按Enter提交记账：")
 		} else if input1 == "" {
+			good.PutGoodPrice(g, ab.Price)
 			for _, ab := range cacheAccount {
 				saveAcountBook(key, ab.BarCode, ab.Price, false)
 			}
