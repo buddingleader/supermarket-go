@@ -12,12 +12,25 @@ import (
 
 // AppConfig the config of app
 type AppConfig struct {
-	MongoURL string
-	AppName  string
-	AppPath  string
-	HTTPURL  string
-	WorkPath string
-	LogPath  string
+	Mongo     *MongoConfig
+	LevelPath string
+	AppName   string
+	AppPath   string
+	HTTPURL   string
+	WorkPath  string
+	Log       *LogConfig
+}
+
+// MongoConfig for mongodb
+type MongoConfig struct {
+	URL     string
+	TimeOut int64 // Second
+}
+
+// LogConfig for log
+type LogConfig struct {
+	Path  string
+	Level string
 }
 
 // Config the gloable config
@@ -31,25 +44,28 @@ func init() {
 }
 
 // Initial config
-func Initial() {
-	var err error
-	if Config.AppPath, err = filepath.Abs(filepath.Dir(os.Args[0])); err != nil {
-		panic(err)
-	}
-
-	if Config.WorkPath, err = os.Getwd(); err != nil {
-		panic(err)
-	}
-	appConfigPath := filepath.Join(Config.WorkPath, filename)
-	fmt.Println("WorkPath:", appConfigPath)
+func Initial(appConfigPath string) {
 	if !utils.FileExists(appConfigPath) {
-		appConfigPath = filepath.Join(Config.AppPath, filename)
-		fmt.Println("AppPath:", appConfigPath)
+		var err error
+		if Config.AppPath, err = filepath.Abs(filepath.Dir(os.Args[0])); err != nil {
+			panic(err)
+		}
+
+		if Config.WorkPath, err = os.Getwd(); err != nil {
+			panic(err)
+		}
+		appConfigPath = filepath.Join(Config.WorkPath, filename)
+		fmt.Println("WorkPath:", appConfigPath)
 		if !utils.FileExists(appConfigPath) {
-			panic("Cannot found the app.conf in WorkPath and AppPath")
+			appConfigPath = filepath.Join(Config.AppPath, filename)
+			fmt.Println("AppPath:", appConfigPath)
+			if !utils.FileExists(appConfigPath) {
+				panic("Cannot found the app.conf in WorkPath and AppPath")
+			}
 		}
 	}
 
+	fmt.Println("appConfigPath:", appConfigPath)
 	b, err := ioutil.ReadFile(appConfigPath)
 	if err != nil {
 		panic(err)
@@ -61,21 +77,25 @@ func Initial() {
 			panic(err)
 		}
 	}
+
+	if err := formatAppConf(Config, appConfigPath); err != nil {
+		fmt.Println("Failed to format config:", err)
+	}
 }
 
 func newAppConf() *AppConfig {
 	return &AppConfig{
-		AppName: "supermarket-go",
+		AppName:   "supermarket-go",
+		LevelPath: "/leveldb",
 	}
 }
 
-func saveAppConf(conf *AppConfig) error {
+func formatAppConf(conf *AppConfig, appConfigPath string) error {
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	b, err := json.MarshalIndent(conf, "", "    ")
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("conf:", string(b))
-	return ioutil.WriteFile(filename, b, 0666)
+	return ioutil.WriteFile(appConfigPath, b, 0666)
 }

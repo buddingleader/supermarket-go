@@ -7,7 +7,6 @@ import (
 
 	common "github.com/wangff15386/supermarket-go/common/utils"
 	db "github.com/wangff15386/supermarket-go/local/leveldb"
-	"github.com/wangff15386/supermarket-go/log"
 
 	"github.com/tealeg/xlsx"
 )
@@ -16,11 +15,6 @@ import (
 const (
 	GOODSNAME     = "goods" //商品库名称
 	EXCELFILEPATH = "GoodsBarcode_excel.xlsx"
-)
-
-var (
-	infolog  = log.GetLogger("good", "[INFO] ")
-	errorlog = log.GetLogger("good", "[Error] ")
 )
 
 // Good 商品
@@ -76,10 +70,10 @@ func SortSellPrice(prices []SellPrice, by func(p, q *SellPrice) bool) {
 }
 
 // GetGoods 从数据库中取得商品库
-func GetGoods() (map[int64]Good, error) {
-	goods := make(map[int64]Good)                     //条形码做键值
+func GetGoods() (map[int64]*Good, error) {
+	goods := make(map[int64]*Good)                    //条形码做键值
 	if err := db.Get(GOODSNAME, &goods); err != nil { //取得商品库
-		infolog.Println(err, "初始化Goods")
+		fmt.Println(err, "初始化Goods")
 		PutGoods(goods)
 		return goods, err
 	}
@@ -87,15 +81,15 @@ func GetGoods() (map[int64]Good, error) {
 }
 
 // PutGoods 存储商品库到数据库中
-func PutGoods(goods map[int64]Good) bool {
+func PutGoods(goods map[int64]*Good) error {
 	return db.Put(GOODSNAME, goods)
 }
 
-func putExcel(path string) (bool, error) {
+func putExcel(path string) error {
 	goods, err := GetGoods()
 	if err != nil { //取得商品库
-		errorlog.Println(err)
-		return false, err
+		fmt.Println(err)
+		return err
 	}
 	if path == "" {
 		path = EXCELFILEPATH
@@ -103,18 +97,18 @@ func putExcel(path string) (bool, error) {
 	xlFile, err := xlsx.OpenFile(path)
 	if err != nil {
 		fmt.Printf("open failed: %s\n", err)
-		return false, err
+		return err
 	}
 	for _, sheet := range xlFile.Sheets {
 		fmt.Printf("Sheet Name: %s\n", sheet.Name)
 		for _, row := range sheet.Rows {
 			barcode, err := row.Cells[0].Int64()
 			if err != nil {
-				errorlog.Println(err)
+				fmt.Println(err)
 				continue
 			}
 			if _, ok := goods[barcode]; !ok {
-				good := Good{
+				good := &Good{
 					Barcode:       barcode,
 					Name:          row.Cells[1].String(),
 					Quantity:      row.Cells[2].String(),
@@ -124,7 +118,7 @@ func putExcel(path string) (bool, error) {
 			}
 		}
 	}
-	return PutGoods(goods), nil
+	return PutGoods(goods)
 }
 
 // ShowGoods 展示商品库
@@ -135,15 +129,15 @@ func ShowGoods(goods map[int64]Good) {
 }
 
 // GetGood 从商品库中取得商品
-func GetGood(barcode int64) (Good, error) {
+func GetGood(barcode int64) (*Good, error) {
 	goods, err := GetGoods()
 	if err != nil {
-		errorlog.Println(err)
-		return Good{}, err
+		fmt.Println(err)
+		return &Good{}, err
 	}
 	good, ok := goods[barcode]
 	if !ok {
-		good = Good{
+		good = &Good{
 			Barcode: barcode,
 			Name:    "未知商品",
 		}
@@ -152,22 +146,22 @@ func GetGood(barcode int64) (Good, error) {
 }
 
 // PutGood 存储商品到商品库中，并更新销售指导价
-func PutGood(good Good) (bool, error) {
+func PutGood(good *Good) error {
 	goods, err := GetGoods()
 	if err != nil {
-		errorlog.Println(err)
-		return false, err
+		fmt.Println(err)
+		return err
 	}
 	goods[good.Barcode] = good
-	return PutGoods(goods), nil
+	return PutGoods(goods)
 }
 
 // GetGoodPrice 从商品库中取得商品的历史销售价格，并按时间倒序排序
-func GetGoodPrice(barcode int64) (Good, error) {
+func GetGoodPrice(barcode int64) (*Good, error) {
 	good, err := GetGood(barcode)
 	if err != nil {
-		errorlog.Println(err)
-		return Good{}, err
+		fmt.Println(err)
+		return &Good{}, err
 	}
 	SortSellPrice(good.OutPrice, func(p, q *SellPrice) bool {
 		return p.Time > q.Time
@@ -176,7 +170,7 @@ func GetGoodPrice(barcode int64) (Good, error) {
 }
 
 // PutGoodPrice 存储商品到商品库中，并更新销售指导价
-func PutGoodPrice(good Good, price float64) (bool, error) {
+func PutGoodPrice(good *Good, price float64) (bool, error) {
 	if price <= 0 {
 		return false, errors.New("金额小于等于0")
 	}
@@ -188,7 +182,7 @@ func PutGoodPrice(good Good, price float64) (bool, error) {
 			sp.Time = common.GetTimeStamp1()
 			prices[index] = sp
 			good.OutPrice = prices
-			return PutGood(good)
+			return false, PutGood(good)
 		}
 	}
 
@@ -197,21 +191,21 @@ func PutGoodPrice(good Good, price float64) (bool, error) {
 		Time:  common.GetTimeStamp1(),
 		Count: 1,
 	})
-	return PutGood(good)
+	return false, PutGood(good)
 }
 
 // DelGoodPrice 删除商品库中商品的销售指导价
 func DelGoodPrice(barCode int64, price float64) (bool, error) {
 	good, err := GetGood(barCode)
 	if err != nil {
-		errorlog.Println(err)
+		fmt.Println(err)
 		return false, err
 	}
 	prices := good.OutPrice
 	for index, sp := range prices {
 		if sp.Price == price {
 			good.OutPrice = append(prices[:index], prices[index+1:]...)
-			return PutGood(good)
+			return false, PutGood(good)
 		}
 	}
 	return false, nil

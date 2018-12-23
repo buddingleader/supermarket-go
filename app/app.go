@@ -1,14 +1,18 @@
 package app
 
-import "github.com/kataras/iris"
+import (
+	"github.com/kataras/iris"
+	"github.com/wangff15386/supermarket-go/app/good"
+)
 
-func main() {
+// Start the app service
+func Start() {
 	// Creates an application with default middleware:
 	// logger and recovery (crash-free) middleware.
 	app := iris.Default()
 
-	// app.Get("/someGet", getting)
-	// app.Post("/somePost", posting)
+	app.Get("/good/{barcode}", good.Get)
+	app.Get("/goods", good.GetAll)
 	// app.Put("/somePut", putting)
 	// app.Delete("/someDelete", deleting)
 	// app.Patch("/somePatch", patching)
