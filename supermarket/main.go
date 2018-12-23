@@ -1,16 +1,9 @@
 package main
 
 import (
-	"supermarket-go/bussiness"
-	_ "supermarket-go/routers"
+	"github.com/wangff15386/supermarket-go/bussiness"
 )
 
 func main() {
-	// if beego.BConfig.RunMode == "dev" {
-	// 	beego.BConfig.WebConfig.DirectoryIndex = true
-	// 	beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
-	// }
-	// beego.Run()
-
 	bussiness.OpenBussiness()
 }

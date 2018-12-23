@@ -2,7 +2,7 @@ package bussiness
 
 import "strconv"
 
-// checkBarcode 校验标准条形码
+// checkBarcode check standard barcode
 func checkBarcode(str string) (int64, bool) {
 	if len(str) <= 8 {
 		return 0, false
@@ -14,7 +14,7 @@ func checkBarcode(str string) (int64, bool) {
 	return v, true
 }
 
-// checkPrice 校验价格
+// checkPrice check price
 func checkPrice(str string) (float64, bool) {
 	if len(str) > 8 {
 		return 0, false

@@ -1,26 +1,24 @@
-package common
+package utils
 
 import (
 	"strconv"
-	"supermarket-go/log"
 )
 
-// ToInt64 string转换为int64，转换失败则为0
+// ToInt64 convert string to int64
 func ToInt64(str string) int64 {
 	v, err := strconv.ParseInt(str, 10, 64)
 	if err != nil {
-		log.ErrorLog(err)
-		return 0
+		panic(err)
 	}
 	return v
 }
 
-// Int64ToString int64转换为string
+// Int64ToString convert int64 to string
 func Int64ToString(i int64) string {
 	return strconv.FormatInt(i, 10)
 }
 
-// Float64ToString Float64转换为string，保留两位小数
+// Float64ToString convert float64 to string, contains two
 func Float64ToString(f float64) string {
 	return strconv.FormatFloat(f, 'f', 2, 64)
 }

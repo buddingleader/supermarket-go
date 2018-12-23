@@ -4,9 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"sort"
-	common "supermarket-go/common/utils"
-	db "supermarket-go/local/leveldb"
-	"supermarket-go/log"
+
+	common "github.com/wangff15386/supermarket-go/common/utils"
+	db "github.com/wangff15386/supermarket-go/local/leveldb"
+	"github.com/wangff15386/supermarket-go/log"
 
 	"github.com/tealeg/xlsx"
 )
@@ -15,6 +16,11 @@ import (
 const (
 	GOODSNAME     = "goods" //商品库名称
 	EXCELFILEPATH = "GoodsBarcode_excel.xlsx"
+)
+
+var (
+	infolog  = log.GetLogger("good", "[INFO] ")
+	errorlog = log.GetLogger("good", "[Error] ")
 )
 
 // Good 商品
@@ -73,7 +79,7 @@ func SortSellPrice(prices []SellPrice, by func(p, q *SellPrice) bool) {
 func GetGoods() (map[int64]Good, error) {
 	goods := make(map[int64]Good)                     //条形码做键值
 	if err := db.Get(GOODSNAME, &goods); err != nil { //取得商品库
-		log.InfoLog(err, "初始化Goods")
+		infolog.Println(err, "初始化Goods")
 		PutGoods(goods)
 		return goods, err
 	}
@@ -88,7 +94,7 @@ func PutGoods(goods map[int64]Good) bool {
 func putExcel(path string) (bool, error) {
 	goods, err := GetGoods()
 	if err != nil { //取得商品库
-		log.ErrorLog(err)
+		errorlog.Println(err)
 		return false, err
 	}
 	if path == "" {
@@ -104,7 +110,7 @@ func putExcel(path string) (bool, error) {
 		for _, row := range sheet.Rows {
 			barcode, err := row.Cells[0].Int64()
 			if err != nil {
-				log.ErrorLog(err)
+				errorlog.Println(err)
 				continue
 			}
 			if _, ok := goods[barcode]; !ok {
@@ -132,7 +138,7 @@ func ShowGoods(goods map[int64]Good) {
 func GetGood(barcode int64) (Good, error) {
 	goods, err := GetGoods()
 	if err != nil {
-		log.ErrorLog(err)
+		errorlog.Println(err)
 		return Good{}, err
 	}
 	good, ok := goods[barcode]
@@ -149,7 +155,7 @@ func GetGood(barcode int64) (Good, error) {
 func PutGood(good Good) (bool, error) {
 	goods, err := GetGoods()
 	if err != nil {
-		log.ErrorLog(err)
+		errorlog.Println(err)
 		return false, err
 	}
 	goods[good.Barcode] = good
@@ -160,7 +166,7 @@ func PutGood(good Good) (bool, error) {
 func GetGoodPrice(barcode int64) (Good, error) {
 	good, err := GetGood(barcode)
 	if err != nil {
-		log.ErrorLog(err)
+		errorlog.Println(err)
 		return Good{}, err
 	}
 	SortSellPrice(good.OutPrice, func(p, q *SellPrice) bool {
@@ -198,7 +204,7 @@ func PutGoodPrice(good Good, price float64) (bool, error) {
 func DelGoodPrice(barCode int64, price float64) (bool, error) {
 	good, err := GetGood(barCode)
 	if err != nil {
-		log.ErrorLog(err)
+		errorlog.Println(err)
 		return false, err
 	}
 	prices := good.OutPrice

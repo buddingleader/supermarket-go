@@ -6,10 +6,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"supermarket-go/bussiness/good"
-	"supermarket-go/common/utils"
-	db "supermarket-go/local/leveldb"
-	"supermarket-go/log"
+
+	"github.com/wangff15386/supermarket-go/bussiness/good"
+	"github.com/wangff15386/supermarket-go/common/utils"
+	db "github.com/wangff15386/supermarket-go/local/leveldb"
+	"github.com/wangff15386/supermarket-go/log"
 
 	"github.com/syndtr/goleveldb/leveldb/util"
 )
@@ -22,6 +23,8 @@ const (
 
 var (
 	cacheAccount []accountBook
+	infolog      = log.GetLogger("bussiness", "[INFO] ")
+	errorlog     = log.GetLogger("bussiness", "[Error] ")
 )
 
 // accountBook 账目
@@ -36,11 +39,11 @@ type accountBook struct {
 func (a *accountBook) String() string {
 	sb := bytes.Buffer{}
 	sb.WriteString(" 条形码：")
-	sb.WriteString(common.Int64ToString(a.BarCode))
+	sb.WriteString(utils.Int64ToString(a.BarCode))
 	sb.WriteString(" 出售商品：")
 	sb.WriteString(a.Name)
 	sb.WriteString(" 出售价格：")
-	sb.WriteString(common.Float64ToString(a.Price))
+	sb.WriteString(utils.Float64ToString(a.Price))
 	sb.WriteString(" 出售时间：")
 	sb.WriteString(a.Time)
 	return sb.String()
@@ -67,7 +70,7 @@ func absToString(date string, abs []accountBook) string {
 		}
 		sb.WriteString("     —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— \n")
 		sb.WriteString("                                              总  价 : ")
-		sb.WriteString(common.Float64ToString(sumPrice))
+		sb.WriteString(utils.Float64ToString(sumPrice))
 		sb.WriteString("  \t\t  \n")
 	}
 	return sb.String()
@@ -87,8 +90,8 @@ func ToString(allabs map[string][]accountBook) string {
 
 // OpenBussiness 开始营业
 func OpenBussiness() {
-	log.InfoLog("开始营业...")
-	key := common.GetDate()
+	infolog.Println("开始营业...")
+	key := utils.GetDate()
 	for {
 		input := readConsole()
 		switch input {
@@ -115,9 +118,9 @@ func readConsole() string {
 	inputReader := bufio.NewReader(os.Stdin)
 	input, err := inputReader.ReadString('\n')
 	if err != nil {
-		log.ErrorLog("读取控制台输入错误:", err)
+		errorlog.Println("读取控制台输入错误:", err)
 	}
-	log.InfoLog("input:", input[:len(input)-2])
+	infolog.Println("input:", input[:len(input)-2])
 	return input[:len(input)-2]
 }
 
@@ -126,9 +129,9 @@ func account(key string, input string) {
 	if barcode, isBarcode := checkBarcode(input); isBarcode {
 		accountBarCode(key, barcode)
 	} else {
-		log.InfoLog("非条形码输入，尝试匹配价格...")
+		infolog.Println("非条形码输入，尝试匹配价格...")
 		if price, isPrice := checkPrice(input); isPrice {
-			saveAcountBook(key, common.GetRandBarcode(), price, true)
+			saveAcountBook(key, utils.GetRandBarcode(), price, true)
 		} else if input == "" {
 			for _, ab := range cacheAccount {
 				saveAcountBook(key, ab.BarCode, ab.Price, false)
@@ -136,13 +139,13 @@ func account(key string, input string) {
 			fmt.Println("本次记账清单：", absToString(key, cacheAccount))
 			cacheAccount = []accountBook{}
 		} else {
-			log.InfoLog("请输入正确的价格：")
+			infolog.Println("请输入正确的价格：")
 		}
 	}
 }
 
 func accountBarCode(key string, barcode int64) {
-	log.InfoLog("标准条形码输入，请输入价格：")
+	infolog.Println("标准条形码输入，请输入价格：")
 	msp := good.SellPrice{}
 	g, err := good.GetGoodPrice(barcode)
 	if err == nil {
@@ -160,7 +163,7 @@ func accountBarCode(key string, barcode int64) {
 		}
 		cacheAccount = append(cacheAccount, ab)
 		fmt.Println("缓存的账本：", absToString(key, cacheAccount))
-		log.InfoLog("已使用推荐价格：", msp.Price, " 你也可以重新输入价格或继续输入条形码或按Enter提交记账：")
+		infolog.Println("已使用推荐价格：", msp.Price, " 你也可以重新输入价格或继续输入条形码或按Enter提交记账：")
 
 		input1 := readConsole()
 		if barcode, isBarcode := checkBarcode(input1); isBarcode {
@@ -187,21 +190,21 @@ func saveAcountBook(date string, barcode int64, price float64, isRandom bool) bo
 	allabs, abs := getAllabsAndNowab() // 获取账簿和当天账本
 	g, err := good.GetGood(barcode)
 	if err != nil {
-		log.ErrorLog("获取商品失败!", err)
+		errorlog.Println("获取商品失败!", err)
 		return false
 	}
-	ab := accountBook{barcode, g.Name, price, common.GetTime1()} //初始化账目
-	abs = append(abs, ab)                                        //加入账本
-	allabs[date] = abs                                           //存入账簿
+	ab := accountBook{barcode, g.Name, price, utils.GetTime1()} //初始化账目
+	abs = append(abs, ab)                                       //加入账本
+	allabs[date] = abs                                          //存入账簿
 	if db.Put(ACCOUNTBOOKNAME, allabs) {
-		log.InfoLog("存入数据库成功!", ab.String())
+		infolog.Println("存入数据库成功!", ab.String())
 	}
 	return true
 }
 
 // showNowDataBase 输出当天数据库
 func showNowDataBase() {
-	log.InfoLog("开始输出数据库...")
+	infolog.Println("开始输出数据库...")
 	// iter := db.Database.NewIterator(nil, nil)
 	iter := db.Database.NewIterator(util.BytesPrefix([]byte(ACCOUNTBOOKNAME)), nil)
 	for iter.Next() {
@@ -212,9 +215,9 @@ func showNowDataBase() {
 		var allabs map[string][]accountBook
 		if err := json.Unmarshal(value, &allabs); err != nil {
 			db.Database.Delete([]byte(ACCOUNTBOOKNAME), nil)
-			log.ErrorLog("反格式化数据错误,value：", allabs, ".开始执行删除")
+			errorlog.Println("反格式化数据错误,value：", allabs, ".开始执行删除")
 		}
-		log.InfoLog(absToString(common.GetDate(), allabs[common.GetDate()]))
+		infolog.Println(absToString(utils.GetDate(), allabs[utils.GetDate()]))
 	}
 	iter.Release()
 	// err = iter.Error()
@@ -222,7 +225,7 @@ func showNowDataBase() {
 
 // showDataBase 输出全部数据库
 func showDataBase() {
-	log.InfoLog("开始输出数据库...")
+	infolog.Println("开始输出数据库...")
 	// iter := db.Database.NewIterator(nil, nil)
 	iter := db.Database.NewIterator(util.BytesPrefix([]byte(ACCOUNTBOOKNAME)), nil)
 	for iter.Next() {
@@ -233,9 +236,9 @@ func showDataBase() {
 		var allabs map[string][]accountBook
 		if err := json.Unmarshal(value, &allabs); err != nil {
 			db.Database.Delete([]byte(ACCOUNTBOOKNAME), nil)
-			log.ErrorLog("反格式化数据错误,value：", allabs, ".开始执行删除")
+			errorlog.Println("反格式化数据错误,value：", allabs, ".开始执行删除")
 		}
-		log.InfoLog(ToString(allabs))
+		infolog.Println(ToString(allabs))
 	}
 	iter.Release()
 	// err = iter.Error()
@@ -243,11 +246,11 @@ func showDataBase() {
 
 // showTheDayDataBase() 输出制定日期数据库
 func showTheDayDataBase() {
-	log.InfoLog("请输入日期[格式：20180428]查询数据库：")
+	infolog.Println("请输入日期[格式：20180428]查询数据库：")
 	input := readConsole()
 	allabs, _ := getAllabsAndNowab()
 	abs := allabs[input]
-	log.InfoLog(absToString(input, abs))
+	infolog.Println(absToString(input, abs))
 }
 
 // getAllabsAndNowab 获取账簿和当天账本
@@ -255,14 +258,14 @@ func getAllabsAndNowab() (map[string][]accountBook, []accountBook) {
 	allabs := make(map[string][]accountBook)                 // 日期做键值,每天都是一个小账本
 	abs := []accountBook{}                                   // 新建当天账本
 	if err := db.Get(ACCOUNTBOOKNAME, &allabs); err == nil { //取得账簿
-		abs = allabs[common.GetDate()] //已有当天账本则取值当天账本
+		abs = allabs[utils.GetDate()] //已有当天账本则取值当天账本
 	}
 	return allabs, abs
 }
 
 // deleteRecordByBarcode 根据条形码清除当天记录
 func deleteRecordByBarcode() {
-	log.InfoLog("请输入要删除的条形码：")
+	infolog.Println("请输入要删除的条形码：")
 	input := readConsole()
 	if barcode, isBarcode := checkBarcode(input); isBarcode {
 		allabs, abs := getAllabsAndNowab() // 获取账簿和当天账本
@@ -278,48 +281,48 @@ func deleteRecordByBarcode() {
 				}
 			}
 			if isDelete {
-				allabs[common.GetDate()] = abs
+				allabs[utils.GetDate()] = abs
 				if db.Put(ACCOUNTBOOKNAME, allabs) {
-					log.InfoLog("删除指定记录成功!", ab.String())
+					infolog.Println("删除指定记录成功!", ab.String())
 				}
 			} else {
-				log.InfoLog("找不到数据可以删除!请仔细核对条形码")
+				infolog.Println("找不到数据可以删除!请仔细核对条形码")
 			}
 		} else {
-			log.InfoLog("无数据可以删除!")
+			infolog.Println("无数据可以删除!")
 		}
 	} else {
-		log.InfoLog("不正确的条形码,请求拒绝!")
+		infolog.Println("不正确的条形码,请求拒绝!")
 	}
 
 }
 
 // deleteLastRecord 清除上一条记录
 func deleteLastRecord() {
-	log.InfoLog("确认是否删除上一条记录?(y:是/n:否)")
+	infolog.Println("确认是否删除上一条记录?(y:是/n:否)")
 	if input := readConsole(); input == "y" {
 		allabs, abs := getAllabsAndNowab() // 获取账簿和当天账本
 		if len(abs) > 0 {
 			ab := abs[len(abs)-1]
 			abs = abs[:len(abs)-1]
-			allabs[common.GetDate()] = abs
+			allabs[utils.GetDate()] = abs
 			if db.Put(ACCOUNTBOOKNAME, allabs) {
-				log.InfoLog("删除上一条记录成功!", ab.String())
+				infolog.Println("删除上一条记录成功!", ab.String())
 			}
 		} else {
-			log.InfoLog("无数据可以删除!")
+			infolog.Println("无数据可以删除!")
 		}
 	}
 }
 
 // deleteLastRecord 清除当天记录
 func deleteDayRecord() {
-	log.InfoLog("确认是否删除当天记录?(y:是/n:否)")
+	infolog.Println("确认是否删除当天记录?(y:是/n:否)")
 	if input := readConsole(); input == "y" {
 		allabs, _ := getAllabsAndNowab() // 获取账簿和当天账本
-		allabs[common.GetDate()] = []accountBook{}
+		allabs[utils.GetDate()] = []accountBook{}
 		if db.Put(ACCOUNTBOOKNAME, allabs) {
-			log.InfoLog("删除当天记录成功!")
+			infolog.Println("删除当天记录成功!")
 		}
 	}
 }
