@@ -12,9 +12,13 @@ func GenerateRangeNum(min, max int64) int64 {
 	return randNum
 }
 
-// GetRandBarcode 根据日期生成随机条形码
+// GetRandBarcode 根据日期生成随机条形码(int64)
 func GetRandBarcode() int64 {
+	return ToInt64(GetRandBarcodeS())
+}
+
+// GetRandBarcodeS 根据日期生成随机条形码(string)
+func GetRandBarcodeS() string {
 	num := GenerateRangeNum(10000, 99999)
-	randNum := GetDate() + Int64ToString(num)
-	return ToInt64(randNum)
+	return GetDate() + Int64ToString(num)
 }

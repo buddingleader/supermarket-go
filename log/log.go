@@ -3,9 +3,8 @@ package log
 import (
 	"path/filepath"
 
-	"github.com/wangff15386/supermarket-go/common/utils"
-
 	"github.com/sirupsen/logrus"
+	"github.com/wangff15386/supermarket-go/common/utils"
 	"github.com/wangff15386/supermarket-go/conf"
 )
 
@@ -14,7 +13,7 @@ func GetLogger(module string) *logrus.Entry {
 	log := logrus.New()
 
 	// log.Out = os.Stdout
-	logpath := filepath.Join(conf.Config.Log.Path, module+".log")
+	logpath := filepath.Join(conf.Config.Log.Path, utils.GetDate()+".log")
 	log.Out = utils.OpenFile(logpath)
 
 	lvl, err := logrus.ParseLevel(conf.Config.Log.Level)

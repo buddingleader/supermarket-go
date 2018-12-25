@@ -87,6 +87,8 @@ func newAppConf() *AppConfig {
 	return &AppConfig{
 		AppName:   "supermarket-go",
 		LevelPath: "/leveldb",
+		Mongo:     &MongoConfig{},
+		Log:       &LogConfig{},
 	}
 }
 

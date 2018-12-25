@@ -1,8 +1,7 @@
-package server
+package good
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -17,33 +16,32 @@ const (
 	COUNT = "GOOD_COUNT"
 )
 
-// GoodService for ACID good
-type GoodService struct {
+// Service for ACID good
+type Service struct {
 	logger *logrus.Entry
 }
 
 // NewGoodService for new good service
-func NewGoodService() *GoodService {
-	return &GoodService{
+func NewGoodService() *Service {
+	return &Service{
 		logger: log.GetLogger("good"),
 	}
 }
 
 // Good standard good
 type Good struct {
-	Barcode       string  `bson:"barcode"`
-	Name          string  `bson:"name"`
-	OutPrice      float64 `bson:"outprice"`
-	Quantity      string  `bson:"quantity"`
-	Specification string  `bson:"specification"`
-}
-
-func (g *Good) String() string {
-	return fmt.Sprintf("Good[Barcode=%s, Name=%s, OutPrice=%.2f, Quantity=%s, Specification=%s]", g.Barcode, g.Name, g.OutPrice, g.Quantity, g.Specification)
+	Barcode           string  `bson:"barcode"`
+	Name              string  `bson:"name"`
+	Specification     string  `bson:"specification"`
+	Unit              string  `bson:"unit"`
+	LastPurchasePrice float64 `bson:"lpprice"`
+	MaximumSalePrice  float64 `bson:"msprice"`
+	Quantity          string  `bson:"quantity"`
+	Stock             uint    `bson:"stock"`
 }
 
 // GetGood get good from mongo
-func (gs *GoodService) GetGood(barcode string) (*Good, error) {
+func (gs *Service) GetGood(barcode string) (*Good, error) {
 	database, ctx, cancel := mongodb.GetConn()
 	defer cancel()
 
@@ -58,7 +56,7 @@ func (gs *GoodService) GetGood(barcode string) (*Good, error) {
 }
 
 // GetGoods get all the goods from mongo
-func (gs *GoodService) GetGoods() ([]*Good, error) {
+func (gs *Service) GetGoods() ([]*Good, error) {
 	database, ctx, cancel := mongodb.GetConn()
 	defer cancel()
 
@@ -85,7 +83,7 @@ func (gs *GoodService) GetGoods() ([]*Good, error) {
 }
 
 // PutGood put a good to mongo
-func (gs *GoodService) PutGood(good *Good) error {
+func (gs *Service) PutGood(good *Good) error {
 	database, ctx, cancel := mongodb.GetConn()
 	defer cancel()
 
@@ -110,7 +108,7 @@ func (gs *GoodService) PutGood(good *Good) error {
 }
 
 // DeleteGood delete a good
-func (gs *GoodService) DeleteGood(barcode string) error {
+func (gs *Service) DeleteGood(barcode string) error {
 	database, ctx, cancel := mongodb.GetConn()
 	defer cancel()
 
@@ -132,7 +130,7 @@ func (gs *GoodService) DeleteGood(barcode string) error {
 }
 
 // GetGoodsCount get goods count
-func (gs *GoodService) GetGoodsCount() (int64, error) {
+func (gs *Service) GetGoodsCount() (int64, error) {
 	database, ctx, cancel := mongodb.GetConn()
 	defer cancel()
 

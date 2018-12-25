@@ -1,0 +1,14 @@
+time="2018-12-24T18:53:47+08:00" level=info msg="hello world!" module=test
+time="2018-12-24T18:53:47+08:00" level=trace msg="hello world!" module=test
+time="2018-12-24T18:53:47+08:00" level=debug msg="hello world!" module=test
+time="2018-12-24T18:53:47+08:00" level=info msg="hello world!" module=test
+time="2018-12-24T18:53:47+08:00" level=warning msg="hello world!" module=test
+time="2018-12-24T18:53:47+08:00" level=warning msg="hello world!" module=test
+time="2018-12-24T18:53:47+08:00" level=error msg="hello world!" module=test
+time="2018-12-24T18:54:27+08:00" level=info msg="hello world!" module=test
+time="2018-12-24T18:54:27+08:00" level=trace msg="hello world!" module=test
+time="2018-12-24T18:54:27+08:00" level=debug msg="hello world!" module=test
+time="2018-12-24T18:54:27+08:00" level=info msg="hello world!" module=test
+time="2018-12-24T18:54:27+08:00" level=warning msg="hello world!" module=test
+time="2018-12-24T18:54:27+08:00" level=warning msg="hello world!" module=test
+time="2018-12-24T18:54:27+08:00" level=error msg="hello world!" module=test

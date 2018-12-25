@@ -1,15 +1,15 @@
-package server
+package good
 
 import (
 	"testing"
 
-	"github.com/wangff15386/supermarket-go/conf"
-
 	"github.com/stretchr/testify/assert"
+	"github.com/wangff15386/supermarket-go/common/utils"
+	"github.com/wangff15386/supermarket-go/conf"
 )
 
 func init() {
-	conf.Initial("../conf/app.conf")
+	conf.Initial("../../conf/app.conf")
 }
 
 func Test_PutGood(t *testing.T) {
@@ -17,7 +17,7 @@ func Test_PutGood(t *testing.T) {
 	err := gs.PutGood(good)
 	assert.NoError(t, err)
 
-	good.OutPrice = 88
+	good.MaximumSalePrice = 88
 	err = gs.PutGood(good)
 	assert.NoError(t, err)
 }
@@ -31,7 +31,7 @@ func Test_GetGood(t *testing.T) {
 	g, err := gs.GetGood(good.Barcode)
 	assert.NoError(t, err)
 	assert.NotNil(t, g)
-	assert.Equal(t, good.OutPrice, g.OutPrice)
+	assert.Equal(t, good.MaximumSalePrice, g.MaximumSalePrice)
 
 	// Invalid barcode
 	g1, err := gs.GetGood("agdfbsg")
@@ -60,10 +60,10 @@ func Test_DeleteGood(t *testing.T) {
 
 func newTestGood() *Good {
 	return &Good{
-		Barcode:       "6926996370634",
-		Name:          "采果姑娘（鲜园坊）",
-		OutPrice:      6.5,
-		Quantity:      "250ml",
-		Specification: "盒",
+		Barcode:          utils.GetRandBarcodeS(),
+		Name:             "采果姑娘（鲜园坊）",
+		MaximumSalePrice: 6.5,
+		Quantity:         "250ml",
+		Specification:    "盒",
 	}
 }
